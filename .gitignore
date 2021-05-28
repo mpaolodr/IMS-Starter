@@ -1,4 +1,3 @@
-.properties/
 .settings/
 target/
 bin/
@@ -6,5 +5,4 @@ bin/
 !.gitignore
 *.log
 
-.properties
 db.properties
