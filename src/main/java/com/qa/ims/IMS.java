@@ -1,5 +1,7 @@
 package com.qa.ims;
 
+import java.util.Properties;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,12 +27,15 @@ public class IMS {
 	}
 
 	public void imsSystem() {
-		LOGGER.info("Welcome to the Inventory Management System!");
+		LOGGER.info("============================================\n");
+		LOGGER.info("Welcome to the Inventory Management System!\n");
+		LOGGER.info("============================================\n");
+		
 		DBUtils.connect();
 
 		Domain domain = null;
 		do {
-			LOGGER.info("Which entity would you like to use?");
+			LOGGER.info("\n\n\nWhich entity would you like to use? \n");
 			Domain.printDomains();
 
 			domain = Domain.getDomain(utils);
@@ -59,7 +64,7 @@ public class IMS {
 				break;
 			}
 
-			LOGGER.info(() ->"What would you like to do with " + domain.name().toLowerCase() + ":");
+			LOGGER.info(() ->" \n\nWhat would you like to do with " + domain.name().toLowerCase() + "?\n");
 
 			Action.printActions();
 			Action action = Action.getAction(utils);

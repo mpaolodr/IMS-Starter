@@ -12,7 +12,7 @@ public interface Dao<T> {
 
 	T create(T t);
 
-	T update(T t);
+	T update(T t, String field);
 
 	int delete(long id);
 
