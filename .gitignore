@@ -6,3 +6,5 @@ bin/
 !.gitignore
 *.log
 
+.properties
+db.properties
