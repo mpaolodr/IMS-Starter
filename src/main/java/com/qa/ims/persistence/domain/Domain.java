@@ -23,9 +23,22 @@ public enum Domain {
 	}
 
 	public static void printDomains() {
-		for (Domain domain : Domain.values()) {
-			LOGGER.info(domain.getDescription());
+		
+		LOGGER.info("============================================\n");
+		
+		for(int i = 0; i < Domain.values().length; i++) {
+			if (i == Domain.values().length - 1) {
+				LOGGER.info(Domain.values()[i].getDescription() + "\n");
+			} 
+			
+			else {
+				
+				LOGGER.info(Domain.values()[i].getDescription());
+				
+			}
 		}
+		
+		LOGGER.info("============================================\n");
 	}
 
 	public static Domain getDomain(Utils utils) {
