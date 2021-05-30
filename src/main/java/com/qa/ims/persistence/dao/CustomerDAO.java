@@ -23,7 +23,8 @@ public class CustomerDAO implements Dao<Customer> {
 		String firstname = resultSet.getString("firstname");
 		String surname = resultSet.getString("surname");
 		String address = resultSet.getString("address");
-		return new Customer(id, firstname, surname, address);
+		String email = resultSet.getString("email");
+		return new Customer(id, firstname, surname, address, email);
 	}
 
 	/**
