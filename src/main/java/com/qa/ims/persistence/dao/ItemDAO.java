@@ -38,11 +38,12 @@ public class ItemDAO implements Dao<Item> {
 			PreparedStatement ps = con.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 			
-			List<Item> items = new ArrayList<Item>();
 			
-			do {
+			List<Item> items = new ArrayList<>();
+			
+			while (rs.next()) {
 				items.add(modelFromResultSet(rs));
-			} while (rs.next());
+			}
 			
 			return items;
 			
@@ -122,6 +123,9 @@ public class ItemDAO implements Dao<Item> {
 			Connection con = DBUtils.getInstance().getConnection();
 			String sql = "INSERT INTO item(item_name, item_price) VALUES (?, ?)";
 			PreparedStatement ps = con.prepareStatement(sql);
+			
+			ps.setString(1, newItem.getName());
+			ps.setDouble(2, newItem.getPrice());
 			
 			ps.executeUpdate();
 			
