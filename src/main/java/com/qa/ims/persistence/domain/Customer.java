@@ -78,7 +78,10 @@ public class Customer {
 
 	@Override
 	public String toString() {
-		return "Customer ID: " + this.id + " Firstname: " + this.firstname + " Surname:" + this.surname;
+		
+		String customerEmail = this.email != null ? this.email : "N/A";
+		
+		return "Customer ID: " + this.id + ", Firstname: " + this.firstname + ", Surname: " + this.surname + ", Email: " + customerEmail;
 	}
 
 	@Override
