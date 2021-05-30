@@ -110,7 +110,7 @@ public class ItemController implements CrudController<Item> {
 		
 		Item itemToDelete = itemDAO.read(id);
 		
-		LOGGER.info("Are you sure you want to delete this item? \n: " + itemToDelete.toString() + "\n Y / N");
+		LOGGER.info("Are you sure you want to delete this item? \n" + itemToDelete.toString() + " -- Y / N");
 		String option = this.utils.getString();
 		
 		if (option.toLowerCase().equals("y")) {
