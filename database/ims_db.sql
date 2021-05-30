@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS customer (
 );
 
 -- DESCRIBE customer;
--- SELECT * FROM customer;
+SELECT * FROM customer;
 
 CREATE TABLE IF NOT EXISTS item(
 	item_id int NOT NULL AUTO_INCREMENT,
@@ -18,6 +18,9 @@ CREATE TABLE IF NOT EXISTS item(
     item_price varchar(100) NOT NULL,
     PRIMARY KEY(item_id)
 );
+
+ALTER TABLE item
+MODIFY COLUMN item_price dec(10,2) NOT NULL;
 
 -- DESCRIBE item;
 -- SELECT * FROM item;
@@ -42,3 +45,4 @@ CREATE TABLE IF NOT EXISTS orders_item(
 
 -- DESCRIBE orders_item;
 -- SELECT * FROM orders_item;
+
