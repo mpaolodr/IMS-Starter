@@ -81,7 +81,7 @@ public class Customer {
 		
 		String customerEmail = this.email != null ? this.email : "N/A";
 		
-		return "Customer ID: " + this.id + ", Firstname: " + this.firstname + ", Surname: " + this.surname + ", Email: " + customerEmail;
+		return "Customer ID: " + this.id + ", Firstname: " + this.firstname + ", Surname: " + this.surname + ", Email: " + customerEmail + ", Address: " + this.address;
 	}
 
 	@Override

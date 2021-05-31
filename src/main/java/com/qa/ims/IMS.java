@@ -7,8 +7,10 @@ import com.qa.ims.controller.Action;
 import com.qa.ims.controller.CrudController;
 import com.qa.ims.controller.CustomerController;
 import com.qa.ims.controller.ItemController;
+import com.qa.ims.controller.OrderController;
 import com.qa.ims.persistence.dao.CustomerDAO;
 import com.qa.ims.persistence.dao.ItemDAO;
+import com.qa.ims.persistence.dao.OrderDAO;
 import com.qa.ims.persistence.domain.Domain;
 import com.qa.ims.utils.DBUtils;
 import com.qa.ims.utils.Utils;
@@ -19,6 +21,7 @@ public class IMS {
 
 	private final CustomerController customers;
 	private final ItemController items;
+	private final OrderController orders;
 	private final Utils utils;
 
 	public IMS() {
@@ -26,21 +29,21 @@ public class IMS {
 		
 		final CustomerDAO custDAO = new CustomerDAO();
 		final ItemDAO itemDAO = new ItemDAO();
+		final OrderDAO orderDAO = new OrderDAO();
 		
 		this.customers = new CustomerController(custDAO, utils);
 		this.items = new ItemController(itemDAO, utils);
+		this.orders = new OrderController(orderDAO, custDAO, itemDAO, utils);
 	}
 
 	public void imsSystem() {
-		LOGGER.info("============================================\n");
 		LOGGER.info("Welcome to the Inventory Management System!\n");
-		LOGGER.info("============================================\n");
 		
 		DBUtils.connect();
 
 		Domain domain = null;
 		do {
-			LOGGER.info("\n\n\nWhich entity would you like to use? \n");
+			LOGGER.info("\nWhich entity would you like to use? \n");
 			Domain.printDomains();
 
 			domain = Domain.getDomain(utils);
@@ -63,6 +66,7 @@ public class IMS {
 				active = this.items;
 				break;
 			case ORDER:
+				active = this.orders;
 				break;
 			case STOP:
 				return;
