@@ -37,15 +37,13 @@ public class IMS {
 	}
 
 	public void imsSystem() {
-		LOGGER.info("============================================\n");
 		LOGGER.info("Welcome to the Inventory Management System!\n");
-		LOGGER.info("============================================\n");
 		
 		DBUtils.connect();
 
 		Domain domain = null;
 		do {
-			LOGGER.info("\n\n\nWhich entity would you like to use? \n");
+			LOGGER.info("\nWhich entity would you like to use? \n");
 			Domain.printDomains();
 
 			domain = Domain.getDomain(utils);
