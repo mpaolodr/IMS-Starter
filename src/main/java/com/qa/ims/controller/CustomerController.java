@@ -60,10 +60,10 @@ public class CustomerController implements CrudController<Customer> {
 
 			LOGGER.info("Please enter a valid email address: ");
 			String email = utils.getString();
-			
+
 			LOGGER.info("Customer created!");
 			return customerDAO.create(new Customer(firstName, surname, address, email));
-		
+
 		}
 
 		else {
@@ -72,7 +72,6 @@ public class CustomerController implements CrudController<Customer> {
 
 		}
 
-		
 	}
 
 	/**
@@ -108,7 +107,7 @@ public class CustomerController implements CrudController<Customer> {
 			String newFirstname = utils.getString();
 			
 			LOGGER.info("Customer Updated");
-			return customerDAO.update(new Customer(id, newFirstname, surnameFTE, emailFTE, addressFTE),
+			return customerDAO.update(new Customer(id, newFirstname, surnameFTE, addressFTE, emailFTE),
 					"firstname");
 
 		case "s":
@@ -124,7 +123,7 @@ public class CustomerController implements CrudController<Customer> {
 			String newSurname = utils.getString();
 			
 			LOGGER.info("Customer Updated");
-			return customerDAO.update(new Customer(id, firstnameSTE, newSurname, emailSTE, addressSTE),
+			return customerDAO.update(new Customer(id, firstnameSTE, newSurname, addressSTE, emailSTE),
 					"surname");
 
 		case "e":
@@ -140,7 +139,7 @@ public class CustomerController implements CrudController<Customer> {
 			String newEmail = utils.getString();
 			
 			LOGGER.info("Customer Updated");
-			return customerDAO.update(new Customer(id, firstnameETE, surnameETE, newEmail, addressETE),
+			return customerDAO.update(new Customer(id, firstnameETE, surnameETE, addressETE, newEmail),
 					"email");
 
 			
@@ -157,7 +156,7 @@ public class CustomerController implements CrudController<Customer> {
 			String newAddress = utils.getString();
 			
 			LOGGER.info("Customer Updated");
-			return customerDAO.update(new Customer(id, firstnameATE, surnameATE, emailATE, newAddress),
+			return customerDAO.update(new Customer(id, firstnameATE, surnameATE, newAddress, emailATE),
 					"address");
 
 
@@ -193,23 +192,21 @@ public class CustomerController implements CrudController<Customer> {
 	public int delete() {
 		LOGGER.info("Please enter the id of the customer you would like to delete");
 		Long id = utils.getLong();
-		
-		
+
 		LOGGER.info("Are you sure you wish to delete this record? Y / N ");
 		String option = utils.getString();
-		
-		if(option.toLowerCase().equals("y")) {
+
+		if (option.toLowerCase().equals("y")) {
 			LOGGER.info("Customer records were successfully deleted");
 			return customerDAO.delete(id);
-			
-		} 
-		
+
+		}
+
 		else {
 			LOGGER.info("Aborting operation");
 			return 0;
 		}
-		
-		
+
 	}
 
 }
