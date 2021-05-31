@@ -9,9 +9,6 @@ CREATE TABLE IF NOT EXISTS customer (
 	PRIMARY KEY(customer_id)
 );
 
--- DESCRIBE customer;
-SELECT * FROM customer;
-
 CREATE TABLE IF NOT EXISTS item(
 	item_id int NOT NULL AUTO_INCREMENT,
     item_name varchar(100) NOT NULL,
@@ -22,17 +19,12 @@ CREATE TABLE IF NOT EXISTS item(
 ALTER TABLE item
 MODIFY COLUMN item_price dec(10,2) NOT NULL;
 
--- DESCRIBE item;
--- SELECT * FROM item;
-
 CREATE TABLE IF NOT EXISTS orders(
 	order_id int NOT NULL AUTO_INCREMENT,
     customer_id int NOT NULL,
     PRIMARY KEY(order_id)
 );
 
--- DESCRIBE orders;
--- SELECT * FROM orders;
 
 CREATE TABLE IF NOT EXISTS orders_item(
 	id int NOT NULL AUTO_INCREMENT,
@@ -43,6 +35,9 @@ CREATE TABLE IF NOT EXISTS orders_item(
     FOREIGN KEY(item_id) REFERENCES item(item_id)
 );
 
--- DESCRIBE orders_item;
--- SELECT * FROM orders_item;
+ALTER TABLE orders_item DROP FOREIGN KEY orders_item_ibfk_1;
+ALTER TABLE orders_item ADD FOREIGN KEY(order_id) REFERENCES orders(order_id) ON DELETE CASCADE;
+ALTER TABLE orders_item DROP FOREIGN KEY orders_item_ibfk_2;
+ALTER TABLE orders_item ADD FOREIGN KEY(item_id) REFERENCES item(item_id) ON DELETE CASCADE;
+
 
