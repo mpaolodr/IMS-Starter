@@ -51,6 +51,8 @@ public class IMS {
 			domainAction(domain);
 
 		} while (domain != Domain.STOP);
+		
+		utils.closeScanner();
 	}
 
 	private void domainAction(Domain domain) {
