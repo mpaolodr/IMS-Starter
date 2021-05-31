@@ -44,6 +44,70 @@ public class Order {
 	public void setItems(List<Item> items) {
 		this.items = items;
 	}
+	
+	public int getItemQuantity(Item target) {
+		int quantity = 0;
+		
+		for (Item item: this.items) {
+			if (item.getId() == target.getId()) {
+				quantity += 1;
+			}
+		}
+		
+		return quantity;
+	}
+	
+	public void addItems(Item item, long quantity) {
+		
+		for (int i = 0; i < quantity; i++) {
+			this.items.add(item);			
+		}
+	}
+	
+	public void removeItems(Item target, long quantity) {
+		
+		int currentNumberOfItem = getItemQuantity(target);
+		
+		if (currentNumberOfItem >= quantity) {
+			
+			int currentCount = 0;
+			int startIndex = 0;
+			
+			while (startIndex < this.items.size()) {
+				if (this.items.get(startIndex).getId() == target.getId()) {
+					this.items.remove(startIndex);
+					currentCount += 1;
+				}
+				
+				else {
+					
+					if (currentCount == quantity) {
+						break;
+					}
+					
+					startIndex += 1;
+				}
+			}
+			
+		}
+		
+		else {
+			
+			int startIndex = 0;
+			
+			while (startIndex < this.items.size()) {
+				
+				if (this.items.get(startIndex).getId() == target.getId()) {
+					this.items.remove(startIndex);
+				}
+				
+				startIndex += 1;
+			}
+			
+		}
+		
+	
+	}
 
 	public int getQuantity() {
 		return this.quantity;
