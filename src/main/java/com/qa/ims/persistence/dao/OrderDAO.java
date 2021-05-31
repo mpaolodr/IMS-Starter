@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -19,28 +20,58 @@ import com.qa.ims.utils.DBUtils;
 public class OrderDAO implements Dao<Order> {
 
 	public static final Logger LOGGER = LogManager.getLogger();
-
+	
+	private List<String> convertToList(String input) {
+		
+		List<String> result = new ArrayList<String>();
+		
+		String temp = "";
+		
+		
+		for (int i = 0; i < input.length() - 1; i++) {
+			
+			
+				
+			if (input.charAt(i) != '[' & input.charAt(i) != '"' & input.charAt(i) != ' ' & input.charAt(i) != ',') {
+				
+				temp += Character.toString(input.charAt(i));
+				
+				if (input.charAt(i + 1) == '"' | (input.charAt(i + 1) == ',' | input.charAt(i + 1) == ']')) {
+					
+					result.add(temp);
+					temp = "";
+				}
+				
+			}
+			
+		}
+		
+		return result;
+	}
+	
+	
 //	T modelFromResultSet(ResultSet resultSet) throws SQLException;
 	public Order modelFromResultSet(ResultSet resultSet) throws SQLException {
+	
 		Long orderId = resultSet.getLong("order_id");
 		String customerFirstname = resultSet.getString("firstname");
 		String customerSurname = resultSet.getString("surname");
 		String customerAddress = resultSet.getString("address");
 		String customerEmail = resultSet.getString("address");
 		
-		Array itemNamesRS = resultSet.getArray("item_names");
-		String[] itemNames = (String[])itemNamesRS.getArray();
 		
-		Array itemPricesRS = resultSet.getArray("item_prices");
-		Double[] itemPrices = (Double[])itemPricesRS.getArray();
+		List<String> itemNames = convertToList((String)resultSet.getObject("item_names"));
+		List<String> itemPrices = convertToList((String)resultSet.getObject("item_prices"));
+		List<String> itemIDs = convertToList((String)resultSet.getObject("item_ids"));
 		
-
 		List<Item> items = new ArrayList<Item>();
 		
-		for (int i = 0; i < itemNames.length; i++) {
-			items.add(new Item(itemNames[i], itemPrices[i]));
-		}
 		
+		
+		for (int i = 0; i < itemNames.size(); i++) {
+			items.add(new Item(Long.parseLong(itemIDs.get(i)), itemNames.get(i), Double.parseDouble(itemPrices.get(i))));
+		}
+	
 		Customer customer;
 		
 		if (customerEmail == null) {
@@ -51,31 +82,31 @@ public class OrderDAO implements Dao<Order> {
 			customer = new Customer(customerFirstname, customerSurname, customerAddress, customerEmail);
 		}
 		
-		return new Order(customer, items);
+		return new Order(orderId, customer, items);
 
 	}
 
-//	List<T> readAll();
+
 	@Override
 	public List<Order> readAll() {
 		try {
 
 			Connection con = DBUtils.getInstance().getConnection();
-			String sql = "SELECT o.order_id, c.firstname, c.surname, c.email, c.address, JSON_ARRAYAGG(i.item_name) as item_names, JSON_ARRAYAGG(i.item_price) as item_prices FROM orders_item ot INNER JOIN orders o ON ot.order_id = o.order_id INNER JOIN item i ON ot.item_id = i.item_id INNER JOIN customer c ON o.customer_id = c.customer_id GROUP BY o.order_id";
+			String sql = "SELECT o.order_id, c.firstname, c.surname, c.email, c.address, JSON_ARRAYAGG(i.item_id) as item_ids, JSON_ARRAYAGG(i.item_name) as item_names, JSON_ARRAYAGG(i.item_price) as item_prices FROM orders_item ot INNER JOIN orders o ON ot.order_id = o.order_id INNER JOIN item i ON ot.item_id = i.item_id INNER JOIN customer c ON o.customer_id = c.customer_id GROUP BY o.order_id";
 			PreparedStatement ps = con.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 			
 			List<Order> orders = new ArrayList<Order>();
-
+			
 			while (rs.next()) {
 				orders.add(modelFromResultSet(rs));
 			}
-
+			
 			return orders;
 
 		}
 
-		catch (SQLException e) {
+		catch (Exception e) {
 			LOGGER.debug(e);
 			LOGGER.error(e.getMessage());
 		}
@@ -89,7 +120,7 @@ public class OrderDAO implements Dao<Order> {
 		try {
 			
 			Connection con = DBUtils.getInstance().getConnection();
-			String sqlLine1 = "SELECT o.order_id, c.firstname, c.surname, c.email, c.address, JSON_ARRAYAGG(i.item_name) as item_names, JSON_ARRAYAGG(i.item_price) as item_prices FROM orders_item ot";
+			String sqlLine1 = "SELECT o.order_id, c.firstname, c.surname, c.email, c.address, JSON_ARRAYAGG(i.item_id) as item_ids, JSON_ARRAYAGG(i.item_name) as item_names, JSON_ARRAYAGG(i.item_price) as item_prices FROM orders_item ot";
 			String sqlLine2 = " INNER JOIN orders o ON ot.order_id = o.order_id";
 			String sqlLine3 = " INNER JOIN item i ON ot.item_id = i.item_id";
 			String sqlLine4 = " INNER JOIN customer c ON o.customer_id = c.customer_id";
@@ -118,11 +149,11 @@ public class OrderDAO implements Dao<Order> {
 		try {
 			
 			Connection con = DBUtils.getInstance().getConnection();
-			String sqlLine1 = "SELECT o.order_id, c.firstname, c.surname, c.email, c.address, JSON_ARRAYAGG(i.item_name) as item_names, JSON_ARRAYAGG(i.item_price) as item_prices FROM orders_items ot";
+			String sqlLine1 = "SELECT o.order_id, c.firstname, c.surname, c.email, c.address, JSON_ARRAYAGG(i.item_id) as item_ids, JSON_ARRAYAGG(i.item_name) as item_names, JSON_ARRAYAGG(i.item_price) as item_prices FROM orders_item ot";
 			String sqlLine2 = " INNER JOIN orders o ON ot.order_id = o.order_id";
 			String sqlLine3 = " INNER JOIN item i ON ot.item_id = i.item_id";
 			String sqlLine4 = " INNER JOIN customer c ON o.customer_id = c.customer_id";
-			String sqlLine5 = " WHERE c.customer_id = ?";
+			String sqlLine5 = " WHERE o.order_id = ?";
 			String sqlLine6 = " GROUP BY o.order_id";
 			PreparedStatement ps = con.prepareStatement(sqlLine1 + sqlLine2 + sqlLine3 + sqlLine4 + sqlLine5 + sqlLine6);
 			
@@ -171,17 +202,16 @@ public class OrderDAO implements Dao<Order> {
 			Long orderID = latestOrderRS.getLong("order_id");
 			
 			
-			String intermediarySQL = "INSERT INTO orders_item (order_id, item_id) VALUES (? ?)";
-			PreparedStatement intermediaryPS = con.prepareStatement(intermediarySQL);
-			
 			for (Item item: itemsOrdered) {
-				intermediaryPS.setLong(1, orderID);
-				intermediaryPS.setLong(2,  item.getId());
 				
-				intermediaryPS.addBatch();
+				String intermediarySQL = "INSERT INTO orders_item (order_id, item_id) VALUES (?, ?)";
+				PreparedStatement intermediaryPS = con.prepareStatement(intermediarySQL);
+				intermediaryPS.setLong(1, orderID);
+				intermediaryPS.setLong(2, item.getId());
+				
+				intermediaryPS.executeUpdate();
 			}
 			
-			intermediaryPS.executeBatch();
 			
 			return readLatest();
 			
@@ -210,7 +240,7 @@ public class OrderDAO implements Dao<Order> {
 			removeItemsPS.execute();
 			
 			
-			String intermediarySQL = "INSERT INTO orders_item (order_id, item_id) VALUES (? ?)";
+			String intermediarySQL = "INSERT INTO orders_item (order_id, item_id) VALUES (?, ?)";
 			PreparedStatement intermediaryPS = con.prepareStatement(intermediarySQL);
 			
 			for (Item item: order.getItems()) {

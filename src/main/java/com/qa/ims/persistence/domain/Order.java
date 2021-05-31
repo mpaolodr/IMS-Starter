@@ -1,6 +1,8 @@
 package com.qa.ims.persistence.domain;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Order {
 
@@ -119,14 +121,21 @@ public class Order {
 
 	@Override
 	public String toString() {
-		String customerDetails = "Customer Name: " + this.customer.getFirstName() + " " + this.customer.getSurname();
-		String orderDetails = "Order Details: \n";
+		String customerDetails = "Customer Name: " + this.customer.getFirstName() + " " + this.customer.getSurname() + "\n=======================";
+		String orderDetails = "\nOrder ID: " + this.id + ", Order Details: \n";
+		
+		Set<String> tracker = new HashSet<String>();
 
 		for (Item item : this.items) {
-			orderDetails += item.toString() + "\n";
+			
+			if (!tracker.contains(item.getName())) {
+				orderDetails += item.toString() + ", Quantity: " + this.getItemQuantity(item) + "\n";
+				tracker.add(item.getName());
+			}
 		}
-
-		return customerDetails + orderDetails;
+		
+		String totalDetails = String.format("=======================\nTotal Price: %.2f, Total Number of Items: %d", (float)this.getTotalPrice(), this.getQuantity());
+		return customerDetails + orderDetails + totalDetails;
 	}
 
 	@Override

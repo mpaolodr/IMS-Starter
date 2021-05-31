@@ -52,10 +52,18 @@ public class OrderController implements CrudController<Order> {
 		List<Item> itemsOrdered = new ArrayList<Item>();
 
 		do {
+			
+			LOGGER.info("Here's a list of items available: ");
+			List<Item> availableItems = this.itemDAO.readAll();
+			
+			for (Item item: availableItems) {
+				LOGGER.info(item);
+			}
 
 			LOGGER.info("Please choose an item ID you wish to order: ");
 			Long itemID = utils.getLong();
 			Item item = itemDAO.read(itemID);
+
 
 			LOGGER.info("How many of this would you want to add?");
 			Long quantity = utils.getLong();
@@ -81,10 +89,23 @@ public class OrderController implements CrudController<Order> {
 
 	@Override
 	public Order update() {
-
+		LOGGER.info("Below is a list of available orders to choose from: \n=======================================\n" );
+		
+		List<Order> ordersAvailable = orderDAO.readAll();
+		
+		for(Order order: ordersAvailable) {
+			LOGGER.info("Order ID: " + order.getId() + ", Customer: " + order.getCustomer().getFirstName() + " " + order.getCustomer().getSurname());
+		}
+		
+		LOGGER.info("\n=======================================\n");
+		
 		LOGGER.info("Please enter the id of the order you wish to edit: ");
 		Long orderID = utils.getLong();
+		
+	
 		Order currentOrder = orderDAO.read(orderID);
+		
+		
 
 		boolean continueOperation = true;
 
@@ -93,8 +114,8 @@ public class OrderController implements CrudController<Order> {
 			LOGGER.info("What do you want to do with this order?");
 			LOGGER.info("=======================================");
 			LOGGER.info("\sA - ADD Items\n\sR - REMOVE Items");
-			LOGGER.info("=======================================");
 			String option = utils.getString();
+			LOGGER.info("=======================================");
 
 			if (!option.toLowerCase().equals("a") & !option.toLowerCase().equals("r")) {
 				LOGGER.info("Sorry, that command is invalid. Please choose a different option.");
