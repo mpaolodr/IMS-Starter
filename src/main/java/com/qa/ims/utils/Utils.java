@@ -51,5 +51,9 @@ public class Utils {
 		} while (doubleInput == null);
 		return doubleInput;
 	}
+	
+	public void closeScanner() {
+		this.scanner.close();
+	}
 
 }

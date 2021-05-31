@@ -122,7 +122,7 @@ public class Order {
 	@Override
 	public String toString() {
 		String customerDetails = "Customer Name: " + this.customer.getFirstName() + " " + this.customer.getSurname() + "\n=======================";
-		String orderDetails = "\nOrder ID: " + this.id + ", Order Details: \n";
+		String orderDetails = "\nOrder ID: " + this.id + "\nOrder Details: \n";
 		
 		Set<String> tracker = new HashSet<String>();
 
