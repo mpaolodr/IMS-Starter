@@ -128,7 +128,8 @@ public class CustomerDAO implements Dao<Customer> {
 
 		catch (Exception e) {
 			LOGGER.debug(e);
-			LOGGER.error(e.getMessage());
+//			LOGGER.error(e.getMessage());
+			
 		}
 
 		return null;
