@@ -3,6 +3,7 @@ package com.qa.ims.controller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.qa.ims.persistence.domain.Domain;
 import com.qa.ims.utils.Utils;
 
 /**
@@ -34,9 +35,23 @@ public enum Action {
 	 * Prints out all possible actions
 	 */
 	public static void printActions() {
-		for (Action action : Action.values()) {
-			LOGGER.info(action.getDescription());
+		
+		
+		LOGGER.info("============================================\n");
+		
+		for(int i = 0; i < Action.values().length; i++) {
+			if (i == Action.values().length - 1) {
+				LOGGER.info(Action.values()[i].getDescription() + "\n");
+			} 
+			
+			else {
+				
+				LOGGER.info(Action.values()[i].getDescription());
+				
+			}
 		}
+		
+		LOGGER.info("============================================\n");
 	}
 
 	/**
