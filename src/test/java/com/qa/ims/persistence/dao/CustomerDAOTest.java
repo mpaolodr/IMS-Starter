@@ -94,10 +94,10 @@ public class CustomerDAOTest {
 
 	@Test
 	public void testReadLatest() {
-		DAO.create(new Customer("jordan", "harrison", "Sanford, ME"));
-		Customer latest = DAO.readLatest();
+		
+		Customer latest = DAO.create(new Customer("jordan", "harrison", "Sanford, ME"));
 
-		assertEquals(new Customer(latest.getId(), "jordan", "harrison", "Sanford, ME"), DAO.readLatest());
+		assertEquals(latest, DAO.readLatest());
 
 		DAO.delete(latest.getId());
 	}
