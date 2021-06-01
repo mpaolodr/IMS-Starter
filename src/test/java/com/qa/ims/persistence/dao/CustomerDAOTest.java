@@ -23,8 +23,11 @@ public class CustomerDAOTest {
 
 	@Test
 	public void testCreate() {
-		final Customer created = new Customer(2L, "chris", "perrins", "Sanford, ME");
-		assertEquals(created, DAO.create(created));
+		final Customer created = new Customer("chris", "perrins", "Sanford, ME");
+		final Customer fromDB = DAO.create(created);
+		created.setId(fromDB.getId());
+		
+		assertEquals(created, fromDB);
 	}
 
 	@Test
