@@ -85,9 +85,9 @@ public class ItemController implements CrudController<Item> {
 		LOGGER.info("\nCustomer Details: \n" + item + "\n");
 		LOGGER.info("What field do you wish to update? ");
 		LOGGER.info("==================================");
-		LOGGER.info("\s N - name ");
-		LOGGER.info("\s P - price ");
-		LOGGER.info("\s ALL - all fields");
+		LOGGER.info(" N - name ");
+		LOGGER.info(" P - price ");
+		LOGGER.info(" ALL - all fields");
 		LOGGER.info("==================================");
 		String option = this.utils.getString();
 		
