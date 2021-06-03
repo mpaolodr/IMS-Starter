@@ -171,7 +171,7 @@ public class OrderController implements CrudController<Order> {
 
 			LOGGER.info("What do you want to do with this order?");
 			LOGGER.info("=======================================");
-			LOGGER.info("\sA - ADD Items\n\sR - REMOVE Items");
+			LOGGER.info("A - ADD Items\n R - REMOVE Items");
 			String option = utils.getString();
 			LOGGER.info("=======================================");
 

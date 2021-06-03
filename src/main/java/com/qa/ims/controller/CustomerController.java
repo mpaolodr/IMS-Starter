@@ -118,11 +118,11 @@ public class CustomerController implements CrudController<Customer> {
 		LOGGER.info("\nCustomer Details: \n" + customer + "\n");
 		LOGGER.info("What field do you wish to update? ");
 		LOGGER.info("==================================");
-		LOGGER.info("\s F - firstname");
-		LOGGER.info("\s S - surname");
-		LOGGER.info("\s E - email");
-		LOGGER.info("\s A - address");
-		LOGGER.info("\s ALL - all fields");
+		LOGGER.info("  F - firstname");
+		LOGGER.info("  S - surname");
+		LOGGER.info("  E - email");
+		LOGGER.info("  A - address");
+		LOGGER.info("  ALL - all fields");
 
 		LOGGER.info("==================================\n");
 		String option = utils.getString();
