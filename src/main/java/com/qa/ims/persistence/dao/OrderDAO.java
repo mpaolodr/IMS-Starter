@@ -54,10 +54,11 @@ public class OrderDAO implements Dao<Order> {
 	public Order modelFromResultSet(ResultSet resultSet) throws SQLException {
 	
 		Long orderId = resultSet.getLong("order_id");
+		Long customerId = resultSet.getLong("customer_id");
 		String customerFirstname = resultSet.getString("firstname");
 		String customerSurname = resultSet.getString("surname");
 		String customerAddress = resultSet.getString("address");
-		String customerEmail = resultSet.getString("address");
+		String customerEmail = resultSet.getString("email");
 		
 		
 		List<String> itemNames = convertToList((String)resultSet.getObject("item_names"));
@@ -75,11 +76,11 @@ public class OrderDAO implements Dao<Order> {
 		Customer customer;
 		
 		if (customerEmail == null) {
-			customer = new Customer(customerFirstname, customerSurname, customerAddress);
+			customer = new Customer(customerId, customerFirstname, customerSurname, customerAddress);
 		}
 		
 		else {
-			customer = new Customer(customerFirstname, customerSurname, customerAddress, customerEmail);
+			customer = new Customer(customerId, customerFirstname, customerSurname, customerAddress, customerEmail);
 		}
 		
 		return new Order(orderId, customer, items);
@@ -92,7 +93,7 @@ public class OrderDAO implements Dao<Order> {
 		try {
 
 			Connection con = DBUtils.getInstance().getConnection();
-			String sql = "SELECT o.order_id, c.firstname, c.surname, c.email, c.address, JSON_ARRAYAGG(i.item_id) as item_ids, JSON_ARRAYAGG(i.item_name) as item_names, JSON_ARRAYAGG(i.item_price) as item_prices FROM orders_item ot INNER JOIN orders o ON ot.order_id = o.order_id INNER JOIN item i ON ot.item_id = i.item_id INNER JOIN customer c ON o.customer_id = c.customer_id GROUP BY o.order_id";
+			String sql = "SELECT o.order_id, c.customer_id, c.firstname, c.surname, c.email, c.address, JSON_ARRAYAGG(i.item_id) as item_ids, JSON_ARRAYAGG(i.item_name) as item_names, JSON_ARRAYAGG(i.item_price) as item_prices FROM orders_item ot INNER JOIN orders o ON ot.order_id = o.order_id INNER JOIN item i ON ot.item_id = i.item_id INNER JOIN customer c ON o.customer_id = c.customer_id GROUP BY o.order_id";
 			PreparedStatement ps = con.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 			
@@ -120,7 +121,7 @@ public class OrderDAO implements Dao<Order> {
 		try {
 			
 			Connection con = DBUtils.getInstance().getConnection();
-			String sqlLine1 = "SELECT o.order_id, c.firstname, c.surname, c.email, c.address, JSON_ARRAYAGG(i.item_id) as item_ids, JSON_ARRAYAGG(i.item_name) as item_names, JSON_ARRAYAGG(i.item_price) as item_prices FROM orders_item ot";
+			String sqlLine1 = "SELECT o.order_id, c.customer_id, c.firstname, c.surname, c.email, c.address, JSON_ARRAYAGG(i.item_id) as item_ids, JSON_ARRAYAGG(i.item_name) as item_names, JSON_ARRAYAGG(i.item_price) as item_prices FROM orders_item ot";
 			String sqlLine2 = " INNER JOIN orders o ON ot.order_id = o.order_id";
 			String sqlLine3 = " INNER JOIN item i ON ot.item_id = i.item_id";
 			String sqlLine4 = " INNER JOIN customer c ON o.customer_id = c.customer_id";
@@ -149,7 +150,7 @@ public class OrderDAO implements Dao<Order> {
 		try {
 			
 			Connection con = DBUtils.getInstance().getConnection();
-			String sqlLine1 = "SELECT o.order_id, c.firstname, c.surname, c.email, c.address, JSON_ARRAYAGG(i.item_id) as item_ids, JSON_ARRAYAGG(i.item_name) as item_names, JSON_ARRAYAGG(i.item_price) as item_prices FROM orders_item ot";
+			String sqlLine1 = "SELECT o.order_id, c.customer_id, c.firstname, c.surname, c.email, c.address, JSON_ARRAYAGG(i.item_id) as item_ids, JSON_ARRAYAGG(i.item_name) as item_names, JSON_ARRAYAGG(i.item_price) as item_prices FROM orders_item ot";
 			String sqlLine2 = " INNER JOIN orders o ON ot.order_id = o.order_id";
 			String sqlLine3 = " INNER JOIN item i ON ot.item_id = i.item_id";
 			String sqlLine4 = " INNER JOIN customer c ON o.customer_id = c.customer_id";

@@ -91,6 +91,8 @@ public class Customer {
 		result = prime * result + ((firstname == null) ? 0 : firstname.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((surname == null) ? 0 : surname.hashCode());
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
+		result = prime * result + ((address == null) ? 0 : address.hashCode());
 		return result;
 	}
 
@@ -108,6 +110,25 @@ public class Customer {
 				return false;
 		} else if (!getFirstName().equals(other.getFirstName()))
 			return false;
+		if(getEmail().equals("")) {
+			if (!other.getEmail().equals("")) {
+				return false;
+			}
+		}
+		
+		else if (!getEmail().equals(other.getEmail())) {
+			return false;
+	}
+		
+		if(getAddress() == null) {
+			if (other.getAddress() != null) {
+				return false;
+			}	
+		}
+		
+		else if (!getAddress().equals(other.getAddress())) {
+			return false;
+		}
 		if (id == null) {
 			if (other.id != null)
 				return false;
