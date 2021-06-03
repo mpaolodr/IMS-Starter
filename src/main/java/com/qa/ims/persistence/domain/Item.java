@@ -65,6 +65,9 @@ public class Item {
 			return false;
 		}
 		
+		if (getClass() != obj.getClass())
+			return false;
+		
 		Item other = (Item) obj;
 		
 //		compare name field
@@ -90,6 +93,25 @@ public class Item {
 		
 		else if (!this.id.equals(other.getId())) {
 			return false;
+		}
+		
+		if (this.getPrice() == null) {
+			if (other.getPrice() != null) {
+				return false;
+			}
+		}
+		
+		else if(this.getPrice() != null) {
+			
+			if ( other.getPrice() != null) {	
+				if (this.getPrice().compareTo(other.getPrice()) != 0) {
+					return false;
+				}
+			}
+			
+			else {
+				return false;
+			}
 		}
 		
 		return true;

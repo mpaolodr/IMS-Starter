@@ -158,6 +158,11 @@ public class OrderController implements CrudController<Order> {
 	
 		Order currentOrder = orderDAO.read(orderID);
 		
+		if (currentOrder == null) {
+			LOGGER.info("Sorry. That order doesn't exist. Please try again.");
+			return null;
+		}
+		
 		
 
 		boolean continueOperation = true;

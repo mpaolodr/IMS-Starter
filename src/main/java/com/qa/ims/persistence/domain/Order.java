@@ -30,7 +30,7 @@ public class Order {
 		this(customer, items);
 		this.id = id;
 	}
-	
+
 	public Long getId() {
 		return this.id;
 	}
@@ -46,69 +46,72 @@ public class Order {
 	public void setItems(List<Item> items) {
 		this.items = items;
 	}
-	
+
 	public int getItemQuantity(Item target) {
 		int quantity = 0;
-		
-		for (Item item: this.items) {
+
+		for (Item item : this.items) {
 			if (item.getId() == target.getId()) {
 				quantity += 1;
 			}
 		}
-		
+
 		return quantity;
 	}
-	
-	public void addItems(Item item, long quantity) {
-		
-		for (int i = 0; i < quantity; i++) {
-			this.items.add(item);			
+
+	public void addItems(Item item, long quantityToAdd) {
+
+		for (int i = 0; i < quantityToAdd; i++) {
+			this.items.add(item);
 		}
 	}
-	
-	public void removeItems(Item target, long quantity) {
-		
+
+	public void removeItems(Item target, long quantityToRemove) {
+
 		int currentNumberOfItem = getItemQuantity(target);
-		
-		if (currentNumberOfItem >= quantity) {
-			
+
+		if (currentNumberOfItem >= quantityToRemove) {
+
 			int currentCount = 0;
 			int startIndex = 0;
-			
+
 			while (startIndex < this.items.size()) {
 				if (this.items.get(startIndex).getId() == target.getId()) {
 					this.items.remove(startIndex);
 					currentCount += 1;
 				}
-				
+
 				else {
-					
-					if (currentCount == quantity) {
-						break;
-					}
-					
+
 					startIndex += 1;
 				}
-			}
-			
-		}
-		
-		else {
-			
-			int startIndex = 0;
-			
-			while (startIndex < this.items.size()) {
 				
+				if (currentCount == quantityToRemove) {
+					break;
+				}
+			}
+
+		}
+
+		else {
+
+			int startIndex = 0;
+
+			while (startIndex < this.items.size()) {
+
 				if (this.items.get(startIndex).getId() == target.getId()) {
 					this.items.remove(startIndex);
 				}
 				
-				startIndex += 1;
+				else {
+					startIndex += 1;
+					
+				}
+
 			}
-			
+
 		}
-		
-	
+
 	}
 
 	public int getQuantity() {
@@ -121,20 +124,22 @@ public class Order {
 
 	@Override
 	public String toString() {
-		String customerDetails = "Customer Name: " + this.customer.getFirstName() + " " + this.customer.getSurname() + "\n=======================";
+		String customerDetails = "Customer Name: " + this.customer.getFirstName() + " " + this.customer.getSurname()
+				+ "\n=======================";
 		String orderDetails = "\nOrder ID: " + this.id + "\nOrder Details: \n";
-		
+
 		Set<String> tracker = new HashSet<String>();
 
 		for (Item item : this.items) {
-			
+
 			if (!tracker.contains(item.getName())) {
 				orderDetails += item.toString() + ", Quantity: " + this.getItemQuantity(item) + "\n";
 				tracker.add(item.getName());
 			}
 		}
-		
-		String totalDetails = String.format("=======================\nTotal Price: %.2f, Total Number of Items: %d", (float)this.getTotalPrice(), this.getQuantity());
+
+		String totalDetails = String.format("=======================\nTotal Price: %.2f, Total Number of Items: %d",
+				(float) this.getTotalPrice(), this.getQuantity());
 		return customerDetails + orderDetails + totalDetails;
 	}
 
@@ -145,12 +150,12 @@ public class Order {
 		int result = 1;
 
 		result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+		result = prime * result + ((this.items == null) ? 0 : this.items.hashCode());
+		result = prime * result + ((this.customer == null) ? 0 : this.customer.hashCode());
+		result = prime * result + ((this.quantity == null) ? 0 : this.quantity.hashCode());
+		result = prime * result + ((this.totalPrice == null) ? 0 : this.totalPrice.hashCode());
 
-		for (Item item : this.items) {
-			result += prime * result + item.hashCode();
-		}
-
-		return result + this.customer.hashCode();
+		return result;
 	}
 
 	@Override
@@ -170,7 +175,6 @@ public class Order {
 
 		Order other = (Order) obj;
 
-//		compare customer field
 		if (this.getCustomer() == null) {
 			if (other.getCustomer() != null) {
 				return false;
@@ -181,15 +185,54 @@ public class Order {
 			return false;
 		}
 
-//		compare id field
 		if (this.id == null) {
-			if (other.id == null) {
+			if (other.id != null) {
 				return false;
 			}
 		}
 
 		else if (!this.id.equals(other.id)) {
 			return false;
+		}
+
+		if (this.items == null) {
+			if (other.items != null) {
+				return false;
+			}
+		}
+
+		else if (!this.items.equals(other.items)) {
+			return false;
+		}
+
+		if (this.quantity == null) {
+
+			if (other.quantity != null) {
+				return false;
+			}
+		}
+
+		else if (this.quantity != null && other.quantity != null) {
+
+			if (this.quantity.compareTo(other.quantity) != 0) {
+
+				return false;
+			}
+		}
+
+		if (this.totalPrice == null) {
+
+			if (other.totalPrice != null) {
+				return false;
+			}
+		}
+
+		else if (this.totalPrice != null && other.totalPrice != null) {
+
+			if (this.totalPrice.compareTo(other.totalPrice) != 0) {
+
+				return false;
+			}
 		}
 
 		return true;
