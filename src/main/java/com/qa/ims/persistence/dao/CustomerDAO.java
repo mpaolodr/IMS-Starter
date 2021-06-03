@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +19,12 @@ public class CustomerDAO implements Dao<Customer> {
 
 	@Override
 	public Customer modelFromResultSet(ResultSet resultSet) throws SQLException {
-		Long id = resultSet.getLong("id");
-		String firstName = resultSet.getString("first_name");
+		Long id = resultSet.getLong("customer_id");
+		String firstname = resultSet.getString("firstname");
 		String surname = resultSet.getString("surname");
-		return new Customer(id, firstName, surname);
+		String address = resultSet.getString("address");
+		String email = resultSet.getString("email");
+		return new Customer(id, firstname, surname, address, email);
 	}
 
 	/**
@@ -33,15 +34,17 @@ public class CustomerDAO implements Dao<Customer> {
 	 */
 	@Override
 	public List<Customer> readAll() {
-		try (Connection connection = DBUtils.getInstance().getConnection();
-				Statement statement = connection.createStatement();
-				ResultSet resultSet = statement.executeQuery("SELECT * FROM customers");) {
+		try (Connection con = DBUtils.getInstance().getConnection();
+				PreparedStatement ps = con.prepareStatement("SELECT * FROM customer");
+				ResultSet resultSet = ps.executeQuery();) {
 			List<Customer> customers = new ArrayList<>();
 			while (resultSet.next()) {
 				customers.add(modelFromResultSet(resultSet));
 			}
 			return customers;
-		} catch (SQLException e) {
+		}
+
+		catch (SQLException e) {
 			LOGGER.debug(e);
 			LOGGER.error(e.getMessage());
 		}
@@ -49,15 +52,18 @@ public class CustomerDAO implements Dao<Customer> {
 	}
 
 	public Customer readLatest() {
-		try (Connection connection = DBUtils.getInstance().getConnection();
-				Statement statement = connection.createStatement();
-				ResultSet resultSet = statement.executeQuery("SELECT * FROM customers ORDER BY id DESC LIMIT 1");) {
+		try (Connection con = DBUtils.getInstance().getConnection();
+				PreparedStatement ps = con.prepareStatement("SELECT * FROM customer ORDER BY customer_id DESC LIMIT 1");
+				ResultSet resultSet = ps.executeQuery();) {
 			resultSet.next();
 			return modelFromResultSet(resultSet);
-		} catch (Exception e) {
+		}
+
+		catch (Exception e) {
 			LOGGER.debug(e);
 			LOGGER.error(e.getMessage());
 		}
+
 		return null;
 	}
 
@@ -68,33 +74,64 @@ public class CustomerDAO implements Dao<Customer> {
 	 */
 	@Override
 	public Customer create(Customer customer) {
-		try (Connection connection = DBUtils.getInstance().getConnection();
-				PreparedStatement statement = connection
-						.prepareStatement("INSERT INTO customers(first_name, surname) VALUES (?, ?)");) {
-			statement.setString(1, customer.getFirstName());
-			statement.setString(2, customer.getSurname());
-			statement.executeUpdate();
+		try (Connection con = DBUtils.getInstance().getConnection();) {
+
+			if (customer.getEmail().equals("")) {
+
+				PreparedStatement noEmailPS = con
+						.prepareStatement("INSERT INTO customer(firstname, surname, address) VALUES (?, ?, ?)");
+
+				noEmailPS.setString(1, customer.getFirstName());
+				noEmailPS.setString(2, customer.getSurname());
+				noEmailPS.setString(3, customer.getAddress());
+				noEmailPS.executeUpdate();
+
+			}
+
+			else {
+
+				PreparedStatement withEmailPS = con.prepareStatement(
+						"INSERT INTO customer(firstname, surname, address, email) VALUES (?, ?, ?, ?)");
+
+				withEmailPS.setString(1, customer.getFirstName());
+				withEmailPS.setString(2, customer.getSurname());
+				withEmailPS.setString(3, customer.getAddress());
+				withEmailPS.setString(4, customer.getEmail());
+				withEmailPS.executeUpdate();
+
+			}
+
 			return readLatest();
-		} catch (Exception e) {
+
+		}
+
+		catch (Exception e) {
 			LOGGER.debug(e);
 			LOGGER.error(e.getMessage());
 		}
+
 		return null;
+
 	}
 
 	@Override
 	public Customer read(Long id) {
-		try (Connection connection = DBUtils.getInstance().getConnection();
-				PreparedStatement statement = connection.prepareStatement("SELECT * FROM customers WHERE id = ?");) {
-			statement.setLong(1, id);
-			try (ResultSet resultSet = statement.executeQuery();) {
+		try (Connection con = DBUtils.getInstance().getConnection();
+				PreparedStatement ps = con.prepareStatement("SELECT * FROM customer WHERE customer_id = ?");) {
+			ps.setLong(1, id);
+
+			try (ResultSet resultSet = ps.executeQuery();) {
 				resultSet.next();
 				return modelFromResultSet(resultSet);
 			}
-		} catch (Exception e) {
-			LOGGER.debug(e);
-			LOGGER.error(e.getMessage());
 		}
+
+		catch (Exception e) {
+			LOGGER.debug(e);
+//			LOGGER.error(e.getMessage());
+			
+		}
+
 		return null;
 	}
 
@@ -106,20 +143,82 @@ public class CustomerDAO implements Dao<Customer> {
 	 * @return
 	 */
 	@Override
-	public Customer update(Customer customer) {
-		try (Connection connection = DBUtils.getInstance().getConnection();
-				PreparedStatement statement = connection
-						.prepareStatement("UPDATE customers SET first_name = ?, surname = ? WHERE id = ?");) {
-			statement.setString(1, customer.getFirstName());
-			statement.setString(2, customer.getSurname());
-			statement.setLong(3, customer.getId());
-			statement.executeUpdate();
+	public Customer update(Customer customer, String fieldToEdit) {
+		try (Connection con = DBUtils.getInstance().getConnection();) {
+
+			switch (fieldToEdit.toLowerCase()) {
+
+			case "firstname":
+
+				PreparedStatement firstnamePS = con.prepareStatement("UPDATE customer SET firstname = ? WHERE customer_id = ?");
+
+				firstnamePS.setString(1, customer.getFirstName());
+				firstnamePS.setLong(2, customer.getId());
+
+				firstnamePS.executeUpdate();
+
+				break;
+
+			case "surname":
+
+				PreparedStatement surnamePS = con.prepareStatement("UPDATE customer SET surname = ? WHERE customer_id = ?");
+
+				surnamePS.setString(1, customer.getSurname());
+				surnamePS.setLong(2, customer.getId());
+
+				surnamePS.executeUpdate();
+
+				break;
+
+			case "email":
+
+				PreparedStatement emailPS = con.prepareStatement("UPDATE customer SET email = ? WHERE customer_id = ?");
+
+				emailPS.setString(1, customer.getEmail());
+				emailPS.setLong(2, customer.getId());
+
+				emailPS.executeUpdate();
+
+				break;
+
+			case "address":
+
+				PreparedStatement addressPS = con.prepareStatement("UPDATE customer SET address = ? WHERE customer_id = ?");
+
+				addressPS.setString(1, customer.getAddress());
+				addressPS.setLong(2, customer.getId());
+
+				addressPS.executeUpdate();
+
+				break;
+
+			default:
+
+				PreparedStatement ps = con.prepareStatement(
+						"UPDATE customer SET firstname = ?, surname = ?, email = ?, address = ? WHERE customer_id = ?");
+
+				ps.setString(1, customer.getFirstName());
+				ps.setString(2, customer.getSurname());
+				ps.setString(3, customer.getEmail());
+				ps.setString(4, customer.getAddress());
+				ps.setLong(5, customer.getId());
+
+				ps.executeUpdate();
+
+				break;
+
+			}
+
 			return read(customer.getId());
-		} catch (Exception e) {
+		}
+
+		catch (Exception e) {
 			LOGGER.debug(e);
 			LOGGER.error(e.getMessage());
 		}
+
 		return null;
+
 	}
 
 	/**
@@ -129,15 +228,21 @@ public class CustomerDAO implements Dao<Customer> {
 	 */
 	@Override
 	public int delete(long id) {
-		try (Connection connection = DBUtils.getInstance().getConnection();
-				PreparedStatement statement = connection.prepareStatement("DELETE FROM customers WHERE id = ?");) {
-			statement.setLong(1, id);
-			return statement.executeUpdate();
-		} catch (Exception e) {
+		try (Connection con = DBUtils.getInstance().getConnection();
+				PreparedStatement ps = con.prepareStatement("DELETE FROM customer WHERE customer_id = ?");) {
+
+			ps.setLong(1, id);
+			return ps.executeUpdate();
+
+		}
+
+		catch (Exception e) {
 			LOGGER.debug(e);
 			LOGGER.error(e.getMessage());
 		}
+
 		return 0;
+
 	}
 
 }

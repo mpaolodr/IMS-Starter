@@ -3,22 +3,34 @@ package com.qa.ims.persistence.domain;
 public class Customer {
 
 	private Long id;
-	private String firstName;
+	private String firstname;
 	private String surname;
+	private String email;
+	private String address;
 
-	public Customer(String firstName, String surname) {
-		this.setFirstName(firstName);
-		this.setSurname(surname);
+	public Customer(String firstname, String surname, String address) {
+		this.firstname = firstname;
+		this.surname = surname;
+		this.address = address;
 	}
 
-	public Customer(Long id, String firstName, String surname) {
-		this.setId(id);
-		this.setFirstName(firstName);
-		this.setSurname(surname);
+	public Customer(String firstname, String surname, String address, String email) {
+		this(firstname, surname, address);
+		this.email = email;
+	}
+	
+	public Customer(Long id, String firstname, String surname, String address) {
+		this(firstname, surname, address);
+		this.id = id;
+	}
+	
+	public Customer(Long id, String firstname, String surname, String address, String email) {
+		this(id, firstname, surname, address);
+		this.email = email;
 	}
 
 	public Long getId() {
-		return id;
+		return this.id;
 	}
 
 	public void setId(Long id) {
@@ -26,33 +38,61 @@ public class Customer {
 	}
 
 	public String getFirstName() {
-		return firstName;
+		return this.firstname;
 	}
 
 	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+		this.firstname = firstName;
 	}
 
 	public String getSurname() {
-		return surname;
+		return this.surname;
 	}
 
 	public void setSurname(String surname) {
 		this.surname = surname;
 	}
+	
+	public String getEmail() {
+		
+		if (this.email != null) {
+			return this.email;
+		}
+		
+		else {
+			return "";
+		}
+	}
+	
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
+	public String getAddress() {
+		return this.address;
+	}
+	
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
 	@Override
 	public String toString() {
-		return "id:" + id + " first name:" + firstName + " surname:" + surname;
+		
+		String customerEmail = this.email != null ? this.email : "N/A";
+		
+		return "Customer ID: " + this.id + ", Firstname: " + this.firstname + ", Surname: " + this.surname + ", Email: " + customerEmail + ", Address: " + this.address;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
+		result = prime * result + ((firstname == null) ? 0 : firstname.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((surname == null) ? 0 : surname.hashCode());
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
+		result = prime * result + ((address == null) ? 0 : address.hashCode());
 		return result;
 	}
 
@@ -70,6 +110,25 @@ public class Customer {
 				return false;
 		} else if (!getFirstName().equals(other.getFirstName()))
 			return false;
+		if(getEmail().equals("")) {
+			if (!other.getEmail().equals("")) {
+				return false;
+			}
+		}
+		
+		else if (!getEmail().equals(other.getEmail())) {
+			return false;
+	}
+		
+		if(getAddress() == null) {
+			if (other.getAddress() != null) {
+				return false;
+			}	
+		}
+		
+		else if (!getAddress().equals(other.getAddress())) {
+			return false;
+		}
 		if (id == null) {
 			if (other.id != null)
 				return false;
