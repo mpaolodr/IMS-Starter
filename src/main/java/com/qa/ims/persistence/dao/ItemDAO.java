@@ -79,7 +79,7 @@ public class ItemDAO implements Dao<Item> {
 			
 			catch(Exception e) {
 				LOGGER.debug(e);
-				LOGGER.error(e.getMessage());
+//				LOGGER.error(e.getMessage());
 			}
 		
 		} 
@@ -179,9 +179,8 @@ public class ItemDAO implements Dao<Item> {
 				break;
 				
 				
-			
-			default:
-
+			case "all":
+				
 				sql = "UPDATE item SET item_name = ?, item_price = ? WHERE item_id = ?";
 				PreparedStatement ps = con.prepareStatement(sql);
 				
@@ -192,7 +191,11 @@ public class ItemDAO implements Dao<Item> {
 				ps.executeUpdate();
 				
 				break;
-	
+				
+				
+			default:
+				
+				return null;
 			}
 			
 			return read(item.getId());

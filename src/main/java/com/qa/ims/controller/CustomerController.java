@@ -32,9 +32,19 @@ public class CustomerController implements CrudController<Customer> {
 	@Override
 	public List<Customer> readAll() {
 		List<Customer> customers = customerDAO.readAll();
-		for (Customer customer : customers) {
-			LOGGER.info(customer);
+		
+		if (customers.size() == 0) {
+			LOGGER.info("No customer records found.");
 		}
+		
+		else {
+			
+			for (Customer customer : customers) {
+				LOGGER.info(customer);
+			}
+			
+		}
+		
 		return customers;
 	}
 
@@ -79,17 +89,40 @@ public class CustomerController implements CrudController<Customer> {
 	 */
 	@Override
 	public Customer update() {
+		
+		List<Customer> customers = customerDAO.readAll();
+		
+		if (customers.size() == 0) {
+			LOGGER.info("No customer records exist in the database");
+			return null;
+		}
+		
+		else {
+			LOGGER.info("List of customers:");
+			for (int i = 0; i < customers.size(); i++) {
+				LOGGER.info(i + 1 + "." + " " + customers.get(i));
+			}
+		}
 
-		LOGGER.info("Please enter the id of the customer you would like to update");
+		LOGGER.info("\nPlease enter the id of the customer you would like to update");
 		Long id = utils.getLong();
-
+		
+		Customer customer = customerDAO.read(id);
+		
+		if (customer == null) {
+			LOGGER.info("No customer record found");
+			return null;
+		}
+		
+		
+		LOGGER.info("\nCustomer Details: \n" + customer + "\n");
 		LOGGER.info("What field do you wish to update? ");
-		LOGGER.info("==================================\n");
-		LOGGER.info("\s F - firstname \n");
-		LOGGER.info("\s S - surname \n");
-		LOGGER.info("\s E - email \n");
-		LOGGER.info("\s A - address");
-		LOGGER.info("\s ALL - all fields\n");
+		LOGGER.info("==================================");
+		LOGGER.info("  F - firstname");
+		LOGGER.info("  S - surname");
+		LOGGER.info("  E - email");
+		LOGGER.info("  A - address");
+		LOGGER.info("  ALL - all fields");
 
 		LOGGER.info("==================================\n");
 		String option = utils.getString();
@@ -158,10 +191,9 @@ public class CustomerController implements CrudController<Customer> {
 			LOGGER.info("Customer Updated");
 			return customerDAO.update(new Customer(id, firstnameATE, surnameATE, newAddress, emailATE),
 					"address");
-
-
-		default:
-
+			
+		case "all":
+			
 			LOGGER.info("Please enter a new first name: ");
 			String firstName = utils.getString();
 
@@ -177,6 +209,12 @@ public class CustomerController implements CrudController<Customer> {
 			LOGGER.info("Customer Updated");
 			return customerDAO.update(new Customer(id, firstName, surname, address, email), "all");
 			
+
+		default:
+			
+			LOGGER.info("Invalid command");
+			return null;
+
 		}
 
 		
@@ -190,8 +228,32 @@ public class CustomerController implements CrudController<Customer> {
 	 */
 	@Override
 	public int delete() {
-		LOGGER.info("Please enter the id of the customer you would like to delete");
+		
+		List<Customer> customers = customerDAO.readAll();
+		
+		if (customers.size() == 0) {
+			LOGGER.info("No customer records exist in the database");
+			return 0;
+		}
+		
+		else {
+			LOGGER.info("List of customers:");
+			for (int i = 0; i < customers.size(); i++) {
+				LOGGER.info(i + 1 + "." + " " + customers.get(i));
+			}
+		}
+		
+		
+		LOGGER.info("\nPlease enter the id of the customer you want to delete:");
 		Long id = utils.getLong();
+		
+		Customer customer = customerDAO.read(id);
+		
+		if (customer == null) {
+			LOGGER.info("No user with that ID was found");
+			return 0;
+		}
+		
 
 		LOGGER.info("Are you sure you wish to delete this record? Y / N ");
 		String option = utils.getString();
@@ -201,9 +263,14 @@ public class CustomerController implements CrudController<Customer> {
 			return customerDAO.delete(id);
 
 		}
+		
+		else if(option.toLowerCase().equals("n")) {
+			LOGGER.info("Aborting operation");
+			return 0;
+		}
 
 		else {
-			LOGGER.info("Aborting operation");
+			LOGGER.info("Invalid Command");
 			return 0;
 		}
 

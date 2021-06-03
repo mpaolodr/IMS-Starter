@@ -26,9 +26,17 @@ public class ItemController implements CrudController<Item> {
 	public List<Item> readAll() {
 		List<Item> items = this.itemDAO.readAll();
 		
-		for (Item item: items) {
-			LOGGER.info(item);
+		if (items.size() == 0) {
+			LOGGER.info("There are currently no items in the database.");
 		}
+		
+		else {
+			for (Item item: items) {
+				LOGGER.info(item);
+			}
+		}
+		
+		
 		
 		return items;
 	}
@@ -42,6 +50,7 @@ public class ItemController implements CrudController<Item> {
 		LOGGER.info("Please enter the price of this item: ");
 		Double itemPrice = this.utils.getDouble();
 		
+		LOGGER.info("\nItem successfully created!");
 		return itemDAO.create(new Item(itemName, itemPrice));
 		
 	}
@@ -49,15 +58,37 @@ public class ItemController implements CrudController<Item> {
 	@Override
 	public Item update() {
 		
-		LOGGER.info("Please enter the id of the item you would like to update: ");
+		List<Item> items = itemDAO.readAll();
+		
+		if (items.size() == 0) {
+			LOGGER.info("No items exist in the database");
+			return null;
+		}
+		
+		else {
+			LOGGER.info("List of items:");
+			for (int i = 0; i < items.size(); i++) {
+				LOGGER.info(i + 1 + "." + " " + items.get(i));
+			}
+		}
+		
+		LOGGER.info("\nPlease enter the id of the item you would like to update: ");
 		Long id = this.utils.getLong();
 		
+		Item item = itemDAO.read(id);
+		
+		if (item == null) {
+			LOGGER.info("No item of that ID was found");
+			return null;
+		}
+		
+		LOGGER.info("\nCustomer Details: \n" + item + "\n");
 		LOGGER.info("What field do you wish to update? ");
-		LOGGER.info("==================================\n");
-		LOGGER.info("\s N - name \n");
-		LOGGER.info("\s P - price \n");
-		LOGGER.info("\s ALL - all fields\n");
-		LOGGER.info("==================================\n");
+		LOGGER.info("==================================");
+		LOGGER.info(" N - name ");
+		LOGGER.info(" P - price ");
+		LOGGER.info(" ALL - all fields");
+		LOGGER.info("==================================");
 		String option = this.utils.getString();
 		
 		switch(option.toLowerCase()) {
@@ -86,8 +117,7 @@ public class ItemController implements CrudController<Item> {
 			LOGGER.info("Price Updated!");
 			return itemDAO.update(new Item(id, nameNTE, newPrice), "price");
 			
-			
-		default:
+		case "all":
 			
 			LOGGER.info("Please enter a new name for this item: ");
 			String name = this.utils.getString();
@@ -97,6 +127,12 @@ public class ItemController implements CrudController<Item> {
 			
 			LOGGER.info("Item Updated!");
 			return itemDAO.update(new Item(id, name, price), "all");
+			
+		default:
+			
+			LOGGER.info("Invalid Command");
+			return null;
+			
 		}
 		
 		
@@ -105,10 +141,29 @@ public class ItemController implements CrudController<Item> {
 	@Override
 	public int delete() {
 		
-		LOGGER.info("Please enter the id of the item you would like to delete ");
+		List<Item> items = itemDAO.readAll();
+		
+		if (items.size() == 0) {
+			LOGGER.info("No items exist in the database");
+			return 0;
+		}
+		
+		else {
+			LOGGER.info("List of items:");
+			for (int i = 0; i < items.size(); i++) {
+				LOGGER.info(i + 1 + "." + " " + items.get(i));
+			}
+		}
+		
+		LOGGER.info("\nPlease enter the id of the item you would like to delete ");
 		Long id = this.utils.getLong();
 		
 		Item itemToDelete = itemDAO.read(id);
+		
+		if (itemToDelete == null) {
+			LOGGER.info("Item of that ID doesn't exist");
+			return 0;
+		}
 		
 		LOGGER.info("Are you sure you want to delete this item? \n" + itemToDelete.toString() + " -- Y / N");
 		String option = this.utils.getString();

@@ -34,35 +34,84 @@ public class OrderController implements CrudController<Order> {
 	@Override
 	public List<Order> readAll() {
 		List<Order> orders = orderDAO.readAll();
-
-		for (Order order : orders) {
-			LOGGER.info(order);
+		
+		if (orders.size() == 0) {
+			LOGGER.info("No orders exist in the database");
 		}
+		
+		else {
+			
+			for (Order order : orders) {
+				LOGGER.info(order);
+			}
+			
+		}
+
 
 		return orders;
 	}
 
 	@Override
 	public Order create() {
-		LOGGER.info("Please enter the customer ID this order is associated with: ");
+		
+		List<Customer> customers = customerDAO.readAll();
+		List<Item> items = itemDAO.readAll();
+		
+		if (customers.size() == 0 & items.size() == 0) {
+			LOGGER.info("No customers and items exist in the database. \nOrders need to be associated with a customer and an item.");
+			return null;
+		}
+		
+		else if (customers.size() == 0) {
+			LOGGER.info("No customers exist in the database. \nOrders need to be associated with a customer.");
+			return null;
+		}
+		
+		else if(items.size() == 0) {
+			LOGGER.info("No items exist in the database. \nOrders need to have items.");
+			return null;
+		}
+		
+		LOGGER.info("List of Customers:");
+		for (int i = 0; i < customers.size(); i++) {
+			LOGGER.info(i + 1 + ". " + customers.get(i));
+		}
+		
+		LOGGER.info("\nPlease enter the customer ID this order is associated with: ");
 		Long customerID = utils.getLong();
+		
 		Customer customer = customerDAO.read(customerID);
+		
+		if (customer == null) {
+			LOGGER.info("Customer with ID " + customerID + " doesn't exist");
+			return null;
+		}
+		
+		LOGGER.info("\nList of available items: ");
+		for (int i = 0; i < items.size(); i++) {
+			LOGGER.info(i + 1 + ". " + items.get(i));
+		}
 
 		boolean addItems = true;
 		List<Item> itemsOrdered = new ArrayList<Item>();
 
 		do {
 			
-			LOGGER.info("Here's a list of items available: ");
-			List<Item> availableItems = this.itemDAO.readAll();
-			
-			for (Item item: availableItems) {
-				LOGGER.info(item);
-			}
+//			LOGGER.info("Here's a list of items available: ");
+//			List<Item> availableItems = this.itemDAO.readAll();
+//			
+//			for (Item item: availableItems) {
+//				LOGGER.info(item);
+//			}
 
-			LOGGER.info("Please choose an item ID you wish to order: ");
+			LOGGER.info("\nPlease choose an item ID you wish to order: ");
 			Long itemID = utils.getLong();
 			Item item = itemDAO.read(itemID);
+			
+			if (item == null) {
+				LOGGER.info("The item with ID " + itemID + " doesn't exist");
+				continue;
+			}
 
 
 			LOGGER.info("How many of this would you want to add?");
@@ -89,10 +138,14 @@ public class OrderController implements CrudController<Order> {
 
 	@Override
 	public Order update() {
-		LOGGER.info("Below is a list of available orders to choose from: \n=======================================\n" );
-		
 		List<Order> ordersAvailable = orderDAO.readAll();
 		
+		if (ordersAvailable.size() == 0) {
+			LOGGER.info("No orders exist in the database");
+			return null;
+		}
+		
+		LOGGER.info("Below is a list of available orders to choose from: \n=======================================\n" );
 		for(Order order: ordersAvailable) {
 			LOGGER.info("Order ID: " + order.getId() + ", Customer: " + order.getCustomer().getFirstName() + " " + order.getCustomer().getSurname());
 		}
@@ -105,6 +158,11 @@ public class OrderController implements CrudController<Order> {
 	
 		Order currentOrder = orderDAO.read(orderID);
 		
+		if (currentOrder == null) {
+			LOGGER.info("Sorry. That order doesn't exist. Please try again.");
+			return null;
+		}
+		
 		
 
 		boolean continueOperation = true;
@@ -113,7 +171,7 @@ public class OrderController implements CrudController<Order> {
 
 			LOGGER.info("What do you want to do with this order?");
 			LOGGER.info("=======================================");
-			LOGGER.info("\sA - ADD Items\n\sR - REMOVE Items");
+			LOGGER.info("A - ADD Items\n R - REMOVE Items");
 			String option = utils.getString();
 			LOGGER.info("=======================================");
 
@@ -168,20 +226,26 @@ public class OrderController implements CrudController<Order> {
 
 	@Override
 	public int delete() {
-		LOGGER.info("Here's a list of orders in the database: ");
-
 		List<Order> orders = orderDAO.readAll();
-		for (Order order : orders) {
-			LOGGER.info(order);
+		
+		if (orders.size() == 0) {
+			LOGGER.info("No orders exist in the database");
+			return 0;
+			
+		}
+		
+		LOGGER.info("Here's a list of orders in the database:\n");
+		for (int i = 0; i < orders.size(); i++) {
+			LOGGER.info(i + 1 + ". " + orders.get(i) + "\n");
 		}
 
 		LOGGER.info("Please enter the ID of the order you wan to delete: ");
 		Long orderID = utils.getLong();
 
-		LOGGER.info("This order will be removed from the database: ");
+		LOGGER.info("\nThis order will be removed from the database: ");
 		LOGGER.info(orderDAO.read(orderID));
 
-		LOGGER.info("Are you sure you want to procede with this operation? Y / N");
+		LOGGER.info("\nAre you sure you want to procede with this operation? Y / N");
 		String option = utils.getString();
 
 		if (option.toLowerCase().equals("y")) {

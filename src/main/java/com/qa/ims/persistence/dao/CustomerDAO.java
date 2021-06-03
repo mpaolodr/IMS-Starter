@@ -128,7 +128,8 @@ public class CustomerDAO implements Dao<Customer> {
 
 		catch (Exception e) {
 			LOGGER.debug(e);
-			LOGGER.error(e.getMessage());
+//			LOGGER.error(e.getMessage());
+			
 		}
 
 		return null;
@@ -182,7 +183,7 @@ public class CustomerDAO implements Dao<Customer> {
 
 			case "address":
 
-				PreparedStatement addressPS = con.prepareStatement("UPDATE customer SET email = ? WHERE customer_id = ?");
+				PreparedStatement addressPS = con.prepareStatement("UPDATE customer SET address = ? WHERE customer_id = ?");
 
 				addressPS.setString(1, customer.getAddress());
 				addressPS.setLong(2, customer.getId());
